@@ -1,0 +1,26 @@
+@model WebApplication2.ViewModels.LoginViewModel;
+
+
+@{
+    ViewData["Title"] = "Вход в систему";
+}
+
+<h2 class="mb-4">Вход в систему</h2>
+
+<form asp-action="Login" method="post" class="w-50 mx-auto">
+    <div class="mb-3">
+        <label asp-for="Username" class="form-label">Логин</label>
+        <input asp-for="Username" class="form-control" />
+        <span asp-validation-for="Username" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Password" class="form-label">Пароль</label>
+        <input asp-for="Password" type="password" class="form-control" />
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Войти</button>
+</form>
+
+

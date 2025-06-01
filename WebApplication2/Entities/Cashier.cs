@@ -13,6 +13,6 @@ public class Cashiers
     public string? CashierName { get; set; }
     [Column("CashierPhoneNumber")]
     public Int32 CashierPhoneNumber { get; set; }
-    public Guid? UserId { get; set; }
+    public Guid UserId { get; set; }
     public User User { get; set; }
 }

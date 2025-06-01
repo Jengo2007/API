@@ -1,0 +1,40 @@
+@model WebApplication2.ViewModels.RegisteViewModel;
+
+
+
+@{
+ViewData["Title"] = "Регистрация";
+}
+
+<h2 class="mb-4">Регистрация</h2>
+
+<form asp-action="Register" method="post" class="w-50 mx-auto">
+    <div class="mb-3">
+        <label asp-for="Username" class="form-label">Логин</label>
+        <input asp-for="Username" class="form-control" />
+        <span asp-validation-for="Username" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label">Email</label>
+        <input asp-for="Email" type="email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Password" class="form-label">Пароль</label>
+        <input asp-for="Password" type="password" class="form-control" />
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="ConfirmPassword" class="form-label">Повторите пароль</label>
+        <input asp-for="ConfirmPassword" type="password" class="form-control" />
+        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success">Зарегистрироваться</button>
+</form>
+
+
+
