@@ -1,0 +1,120 @@
+/* Глобальный фон */
+body {
+    height: 585px;
+    font-family: "Inter", sans-serif;
+    background: linear-gradient(to bottom, #f0fdf4, #c1f4d7);
+    color: #065f46;
+    margin: 0;
+    padding: 0;
+}
+
+/* Навигация */
+.navbar {
+    background: linear-gradient(to right, #047857, #10b981);
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+    padding: 12px 20px;
+}
+
+.navbar-brand {
+    color: white;
+    font-weight: bold;
+    font-size: 22px;
+    text-decoration: none;
+}
+
+.navbar-nav .nav-link {
+    color: white;
+    padding: 12px 18px;
+    transition: background 0.3s, transform 0.2s;
+}
+
+.navbar-nav .nav-link:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    transform: scale(1.1);
+}
+
+/* Карточки */
+.card {
+    background: linear-gradient(to top, white, #e1fbec);
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.15);
+    margin-bottom: 25px;
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: scale(1.02);
+}
+
+/* Кнопки */
+button, .btn {
+    background: linear-gradient(45deg, #10b981, #047857);
+    color: white;
+    font-size: 18px;
+    padding: 14px 22px;
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.3s ease-in-out;
+}
+
+button:hover, .btn:hover {
+    background: linear-gradient(45deg, #047857, #10b981);
+    transform: scale(1.05);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Формы */
+input, textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #10b981;
+    border-radius: 6px;
+    margin-top: 8px;
+    outline: none;
+    transition: border 0.3s, box-shadow 0.3s;
+}
+
+input:focus, textarea:focus {
+    border-color: #065f46;
+    box-shadow: 0px 0px 8px rgba(6, 95, 70, 0.4);
+}
+
+/* Анимация появления */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card, .btn, input, textarea {
+    animation: fadeIn 0.6s ease-in-out;
+}
+
+/* Футер */
+.footer {
+    background: linear-gradient(to right, #047857, #10b981); /* Совпадает с navbar */
+    padding: 20px;
+    text-align: center;
+    color: white;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    box-shadow: 0px -4px 12px rgba(0, 0, 0, 0.2);
+}
+.admin-title,
+.section-title {
+    color: #000000;  /* Чистый чёрный */
+}
+
+
+.cashiers-section{
+    color: black;
+}
+

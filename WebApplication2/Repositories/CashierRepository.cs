@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using WebApplication2.DTO;
 using WebApplication2.Entities;
 using WebApplication2.Interfaces;
@@ -13,52 +14,67 @@ public class CashierRepository:ICashierRepository
     {
         _context = context;
     }
-    public Cashiers AddCashier(Cashiers cashier)
+    public async Task<Cashier> AddCashier(Cashier cashier)
     {
-        var newCashier = new Cashiers()
+        var newCashier = new Cashier()
         {
             CashierName = cashier.CashierName,
             CashierPhoneNumber = cashier.CashierPhoneNumber
         };
         _context.Cashiers.Add(newCashier);
-        _context.SaveChanges(); 
+        await _context.SaveChangesAsync(); 
         return newCashier; 
     }
 
-    public List<Cashiers> GetAllCashiers()
+    public async Task<List<CashierResponceDto>> GetAllCashiers()
     {
-        return _context.Cashiers.ToList();
+        var cashiers = await _context.Cashiers.Select(c => new CashierResponceDto()
+        {
+            CashierId = c.CashierID,
+            CashierName = c.CashierName,
+            CashierPhoneNumber = c.CashierPhoneNumber,
+            UserId = c.UserId
+
+
+        }).ToListAsync();
+        return cashiers;
     }
     
 
-    public Cashiers UpdateCashierById(CashierDto cashier, Guid id)
+    public async Task<Cashier> UpdateCashierById(CashierDto cashier, Guid id)
     {
 
-        var cashierById = _context.Cashiers.FirstOrDefault(c => c.CashierID == id);
+        var cashierById =await _context.Cashiers.FirstOrDefaultAsync(c => c.CashierID == id);
         if (cashierById != null)
         {
             cashierById.CashierName = cashier.CashierName;
             cashierById.CashierPhoneNumber = cashier.CashierPhoneNumber;
             _context.Cashiers.Update(cashierById);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
         return cashierById;    }
 
-    public Cashiers DeleteCashierById(Guid id)
+    public async Task<Cashier> DeleteCashierById(Guid id)
     {
         
-        var cashierToDelete = _context.Cashiers.FirstOrDefault(c => c.CashierID == id);
+        var cashierToDelete = await _context.Cashiers.FirstOrDefaultAsync(c => c.CashierID == id);
         if (cashierToDelete != null)
         {
             _context.Cashiers.Remove(cashierToDelete);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
         return cashierToDelete;
     }
 
-    public Cashiers? GetCashierById(Guid id)
+    public async Task<CashierResponceDto?> GetCashierById(Guid id)
     {
-        return _context.Cashiers.FirstOrDefault(c => c.UserId == id);
+        return await _context.Cashiers.Select(c=>new CashierResponceDto()
+        {
+            CashierId = c.CashierID,
+            CashierName = c.CashierName,
+            CashierPhoneNumber = c.CashierPhoneNumber,
+            UserId = c.UserId
+        }).FirstOrDefaultAsync(c => c.CashierId == id);
 
     }
 }

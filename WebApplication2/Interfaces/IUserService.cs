@@ -4,6 +4,6 @@ namespace WebApplication2.Interfaces;
 
 public interface IUserService
 {
-    bool Register(RegisterDto register);
-    string Login(LoginDto login);
+    Task<bool> Register(RegisterDto register);
+    Task<string> Login(LoginDto login);
 }

@@ -1,5 +1,6 @@
 using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using WebApplication2.DTO;
 using WebApplication2.Entities;
 using WebApplication2.Interfaces;
@@ -17,7 +18,7 @@ public class UserRepository:IUserRepository
     }
 
 
-    public User AddUser(UserDto userDto)
+    public async Task<User> AddUser(UserDto userDto)
     {
 
         var newUser = new User
@@ -28,42 +29,42 @@ public class UserRepository:IUserRepository
         };
         if (userDto.Password != null) newUser.Password = _passwordHasher.HashPassword(newUser, userDto.Password);
         _context.Users.Add(newUser);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
         return newUser;
-    }
+    } 
 
-    public List<User> GetAllUsers()
+    public async Task<List<User>> GetAllUsers()
     {
-        return _context.Users.ToList();
+        return await _context.Users.ToListAsync();
     }
 
-    public User GetUserById(Guid id)
+    public async Task<User> GetUserById(Guid id)
     {
-        return _context.Users.FirstOrDefault(u => u.Id == id);
+        return await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
 
     }
 
-    public User DeleteUserById(Guid id)
+    public async Task<User> DeleteUserById(Guid id)
     {
         
-        var userToDelete = _context.Users.FirstOrDefault(u => u.Id == id);
+        var userToDelete = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
         if (userToDelete != null)
         {
             _context.Users.Remove(userToDelete);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
         return userToDelete;
     }
 
-    public User UpdateUser(UserDto user, Guid id)
+    public async Task<User> UpdateUser(UserDto user, Guid id)
     {
-        var userById = _context.Users.FirstOrDefault(u => u.Id == id);
+        var userById = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
         if (userById != null)
         {
             userById.Username = user.Username;
             userById.Password = user.Password;
-            _context.Users.Update(userById);
-            _context.SaveChanges();
+            _context.Users.Update(userById); 
+            await _context.SaveChangesAsync();
         }
         return userById;  
     }

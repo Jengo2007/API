@@ -6,10 +6,10 @@ namespace WebApplication2.Interfaces;
 
 public interface IUserRepository
 {
-    public User AddUser(UserDto userDto);
-    public List<User> GetAllUsers();
-    public User GetUserById(Guid id);
-    public User DeleteUserById(Guid id);
-    public User UpdateUser(UserDto user,Guid id);
+    Task<User> AddUser(UserDto userDto);
+    Task< List<User>> GetAllUsers();
+    Task<User> GetUserById(Guid id); 
+    Task<User> DeleteUserById(Guid id);
+    Task< User> UpdateUser(UserDto user,Guid id);
     
 }

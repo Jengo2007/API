@@ -20,10 +20,10 @@ public class CashierService:ICashierService
         _cashierContext = cashierContext;
         _passwordHasher = passwordHasher;
     }
-    public byte[] GenerateCasiersFile()
+    public async Task<byte[]> GenerateCasiersFile()
     {
 
-        var allCashiers = _cashierRepository.GetAllCashiers();
+        var allCashiers = await _cashierRepository.GetAllCashiers();
         using var workbook = new XLWorkbook();
         var worksheet = workbook.Worksheets.Add("Cashiers");
         worksheet.Cell(1,1).Value = "Name";
@@ -39,7 +39,7 @@ public class CashierService:ICashierService
         return stream.ToArray();
     }
 
-    public bool RegisterCashier(RegisterCashierDto registerCashierDto)
+    public async Task<bool> RegisterCashier(RegisterCashierDto registerCashierDto)
     {
         if (string.IsNullOrEmpty(registerCashierDto.Password))
             return false;
@@ -53,16 +53,16 @@ public class CashierService:ICashierService
             Role = Roles.Cashier
         };
         _cashierContext.Users.Add(user);
-        _cashierContext.SaveChanges();
+         await _cashierContext.SaveChangesAsync();
 
-        Cashiers cashier = new()
+        Cashier cashier = new()
         {
             CashierName = registerCashierDto.Name,
             CashierPhoneNumber = registerCashierDto.PhoneNumber,
             UserId = user.Id
         };
         _cashierContext.Cashiers.Add(cashier);
-        _cashierContext.SaveChanges();
+         await _cashierContext.SaveChangesAsync();
 
         return true;
     }

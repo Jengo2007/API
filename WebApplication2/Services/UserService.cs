@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using WebApplication2.DTO;
 using WebApplication2.Interfaces;
@@ -18,35 +19,46 @@ public class UserService:IUserService
     private readonly CashierContext _context;
     private readonly IConfiguration _configuration;
     private readonly IPasswordHasher<User> _passwordHasher;
+    private readonly IEmailService _emailService;
     
-    public UserService(CashierContext context, IConfiguration configuration, IPasswordHasher<User> passwordHasher)
+    public UserService(CashierContext context, IConfiguration configuration, IPasswordHasher<User> passwordHasher,IEmailService emailService)
     {
         _context = context;
         _configuration = configuration;
         _passwordHasher = passwordHasher;
+        _emailService = emailService;
     }
-    public bool Register(RegisterDto register)
+    public async Task<bool> Register(RegisterDto register)
     {
         if (string.IsNullOrEmpty(register.Password))
             return false;
-        if(_context.Users.Any(u=>u.Username == register.Username))
+        if(await _context.Users.AnyAsync(u=>u.Username == register.Username))
             return false;
         User user = new()
         {
             Username=register.Username,
-            Password=register.Password
+            Password=register.Password,
+            Email=register.Email
         };
         user.Password=_passwordHasher.HashPassword(user,register.Password);
         _context.Users.Add(user);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
+        var emailDto = new EmailDto
+        {
+            To = user.Email,
+            Subject = "Welcome to Medicine",
+            Body = "Hi" + user.Username + "!" + "You are successfully registered!",
+        };
+        await _emailService.SendEmail(emailDto);
         return true;
+        
         
         
     }
 
-    public string Login(LoginDto login)
+    public async Task<string> Login(LoginDto login)
     { 
-        var user = _context.Users.FirstOrDefault(u => u.Username == login.Username);
+        var user =await _context.Users.FirstOrDefaultAsync(u => u.Username == login.Username);
         if (user == null) return null;
 
         var result = _passwordHasher.VerifyHashedPassword(user, user.Password, login.Password);
@@ -73,7 +85,7 @@ public class UserService:IUserService
             claims: claims,
             expires: DateTime.UtcNow.AddMinutes(double.Parse(_configuration["JwtSettings:ExpireMinutes"]!)),
             signingCredentials: credentials
-        );
+        ); 
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     

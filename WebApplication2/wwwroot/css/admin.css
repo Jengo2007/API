@@ -1,0 +1,165 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f6f9;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+main.main {
+    max-width: 1200px;
+    padding: 20px;
+    height: 490px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #ffffff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+.admin-content {
+    width: 100%;
+}
+
+.cashiers-section {
+    display: none;
+}
+
+.users-section {
+    display: none;
+}
+
+.admin-content {
+    display: block;
+}
+
+.welcome {
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+.welcome h1 {
+    font-size: 32px;
+    margin-bottom: 10px;
+    color: #2c3e50;
+}
+
+.welcome p {
+    font-size: 18px;
+    color: #7f8c8d;
+}
+
+section h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 5px;
+    color: #2980b9;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 40px;
+    table-layout: fixed;
+}
+
+.data-table thead {
+    background-color: #3498db;
+    color: white;
+}
+
+.data-table th, .data-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    word-wrap: break-word;
+}
+
+.data-table tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+.name-column {
+    width: 30%;
+}
+
+.menu a {
+    text-decoration: none;
+    color: #000000;
+}
+
+.menu {
+    text-decoration: none;
+    padding: 0;
+}
+
+.sidebar {
+    margin: 10px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-panel {
+    display: flex;
+}
+
+/* ✅ Исправленный блок действий */
+.actions-column {
+    width: 30%;
+    text-align: center;
+    white-space: nowrap;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px; /* 🔥 Расстояние между кнопками */
+    background-color: white; /* ✅ Добавляет белый фон */
+    padding: 5px; /* 🔥 Отступ для удобства */
+    border-radius: 5px; /* 🔥 Смягчает края */
+}
+
+.actions-column a.btn {
+    display: inline-block;
+    padding: 6px 12px;
+    font-size: 14px;
+    border-radius: 4px;
+    text-decoration: none;
+    color: #fff;
+}
+
+/* ✅ Исправленные стили для иконок */
+.icon-edit,
+.icon-delete {
+    font-size: 16px; /* Фиксируем размер */
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+a.btn-primary {
+    background-color: #3498db;
+    color: #fff;
+    text-decoration: none;
+}
+
+a.btn-primary:hover {
+    background-color: #2980b9;
+}
+
+a.btn-danger {
+    background-color: #e74c3c;
+    color: #fff;
+    text-decoration: none;
+}
+
+a.btn-danger:hover {
+    background-color: #c0392b;
+}
+
+.email-column {
+    width: 40%;
+}

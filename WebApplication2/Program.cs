@@ -1,12 +1,16 @@
 using System.Security.Claims;
 using System.Text;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.VisualBasic;
 using OfficeOpenXml.Utils;
 using WebApplication2.Cnfigurations;
+using WebApplication2.Controllers;
 using WebApplication2.DTO;
 using WebApplication2.Entities;
 using WebApplication2.Interfaces;
@@ -80,16 +84,35 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddScoped<PasswordHasher<User>>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<AccountController>();
+builder.Services.AddAuthorization(); 
+// ---------- Аутентификация через куки ----------
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Account/Login";
+        options.AccessDeniedPath = "/Account/AccessDenied";
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+    });
 
-
-
-
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
+app.UseStaticFiles();
+app.UseRouting();
 
-
-app.UseAuthentication();    
+app.UseAuthentication(); // 🔹 ОБЯЗАТЕЛЬНО до Authorization
 app.UseAuthorization();
+
+app.MapDefaultControllerRoute();
+app.Run();
+
+
+
+
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -120,61 +143,56 @@ app.MapGet("/weatherforecast", () =>
     .WithName("GetWeatherForecast")
     .WithOpenApi();
 
-app.MapGet("/cashiers",[Authorize(Roles = "Admin")] (ICashierRepository repository) =>
+app.MapGet("/cashiers",[Authorize(Roles = "Admin")] async (ICashierRepository repository) =>
 {
-    return Results.Ok(repository.GetAllCashiers());
+    var cashiers = await repository.GetAllCashiers();
+    return Results.Ok(cashiers);
 }).RequireAuthorization();
-app.MapPost("/cashiers", [Authorize(Roles = "Admin")](ICashierRepository repository, Cashiers cashier) =>
+app.MapPost("/cashiers",[Authorize(Roles = "Admin")] async (ICashierRepository repository, Cashier cashier) =>
 {
 
-    var added = repository.AddCashier(cashier);
+    var added = await repository.AddCashier(cashier);
     return Results.Created("/cashiers/" + added.CashierID, added);
 
 }).RequireAuthorization();
 
-app.MapGet("/cashiers/{id}", (Guid id,HttpContext httpContent, ICashierRepository repository) =>
+app.MapGet("/cashiers/{id}", async (Guid id,HttpContext httpContent, ICashierRepository repository) =>
     {
-        var userIdClaim = httpContent.User.Claims.FirstOrDefault(claim => claim.Type == "Id");
-        if (userIdClaim == null)
-            return Results.Unauthorized();
-        var userId=Guid.Parse(userIdClaim.Value);
-        if (id != userId)
-            return Results.Forbid();
-        var cashier=repository.GetCashierById(userId);
-        if (cashier == null)
-            return Results.NotFound("Кассир не найден для этого пользователя");
+      
+        var cashier=await repository.GetCashierById(id);
+        
         return Results.Ok(cashier);
     }).RequireAuthorization()
     .WithName("GetCasierById")
     .WithOpenApi();
 
 
-app.MapDelete("/cashiers/{id}", [Authorize(Roles = "Admin")](Guid id, ICashierRepository repository) =>
+app.MapDelete("/cashiers/{id}", [Authorize(Roles = "Admin")]async (Guid id, ICashierRepository repository) =>
 {
-    var cashier = repository.DeleteCashierById(id);
-    return cashier is not null ? Results.Ok(cashier) : Results.NotFound();
+    var cashier =await repository.DeleteCashierById(id);
+    return Results.Ok(cashier);
 
 }).RequireAuthorization();
 
 app.MapPut("/cashiers/{id}", [Authorize(Roles = "Admin")](Guid id, CashierDto cashier, ICashierRepository repo) =>
     {
         var updatedCashier = repo.UpdateCashierById(cashier, id);
-        return updatedCashier is not null ? Results.Ok(updatedCashier) : Results.NotFound();
+        return Results.Ok(updatedCashier);
     })
     .WithName("UpdateCashier")
     .WithOpenApi()
     .RequireAuthorization();
 
-app.MapGet("/cashiers/excel", (ICashierService service) =>
+app.MapGet("/cashiers/excel",async (ICashierService service) =>
 {
-    var fileBytes = service.GenerateCasiersFile();
+    var  fileBytes = await service.GenerateCasiersFile();
     return Results.File(fileBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         "cashiers.xlsx");
 });
 
-app.MapPost("/register", (IUserService service, RegisterDto registerDto) =>
+app.MapPost("/register",async (IUserService service, RegisterDto registerDto) =>
 {
-    var result = service.Register(registerDto);
+    var result = await service.Register(registerDto);
     if (!result)
         return Results.BadRequest("Пользователь с таким именем уже сушествует или пароль пустой!");
     return Results.Ok("Пользователь успешно зарегистрирован");
@@ -187,9 +205,9 @@ app.MapPost("/login", (IUserService service, LoginDto loginDto) =>
     return Results.Ok(token);
 });
 
-app.MapPost("/register-cashier", (ICashierService service, RegisterCashierDto registerCashierDto) =>
+app.MapPost("/register-cashier", async (ICashierService service, RegisterCashierDto registerCashierDto) =>
 {
-    var result = service.RegisterCashier(registerCashierDto);
+    var result =await service.RegisterCashier(registerCashierDto);
     if (!result)
         return Results.BadRequest("Ошибка при регистрации кассира!");
     return Results.Ok("Кассир успешно зарегистрирован");
@@ -214,31 +232,39 @@ app.MapGet("cashiers/me", [Authorize(Roles = "Admins")](HttpContext httpContext,
     .WithOpenApi();
 
 
-app.MapPost("user/add", [Authorize(Roles = "Admin")](IUserRepository repo, UserDto user) =>
+app.MapPost("user/add", [Authorize(Roles = "Admin")]async (IUserRepository repo, UserDto user) =>
 {
     
-    var added = repo.AddUser(user);
+    var added = await repo.AddUser(user);
     return Results.Created("/user/" + added.Id, added);
 }).RequireAuthorization();
 
-app.MapGet("users", [Authorize(Roles = "Admin")](IUserRepository repo) =>
+app.MapGet("users", [Authorize(Roles = "Admin")]async(IUserRepository repo) =>
 {
-    return Results.Ok(repo.GetAllUsers());
+    return Results.Ok(await repo.GetAllUsers());
     
 }).RequireAuthorization();
 
-app.MapDelete("delete/users", [Authorize(Roles = "Admin")](Guid id, IUserRepository repo) =>
+app.MapDelete("delete/users", [Authorize(Roles = "Admin")]async (Guid id, IUserRepository repo) =>
 {
 
-    var user = repo.DeleteUserById(id);
-    return user is not null ? Results.Ok(user) : Results.NotFound();
+    var user =await repo.DeleteUserById(id);
+    if(user == null)
+        return Results.NotFound("Не найден пользователь с таким именем");
+
+    return Results.Ok(user);
+    
 
 }).RequireAuthorization();
-app.MapPut("update/user", [Authorize(Roles = "Admin")](Guid Id, IUserRepository repo,UserDto user) =>
+app.MapPut("update/user", [Authorize(Roles = "Admin")]async (Guid Id, IUserRepository repo,UserDto user) =>
 {
     
-    var updatedUser = repo.UpdateUser(user, Id);
-    return updatedUser is not null ? Results.Ok(updatedUser) : Results.NotFound();
+    var updatedUser = await repo.UpdateUser(user, Id);
+    if(updatedUser == null)
+        return Results.NotFound("Не найден пользователь с таким именем");
+
+    return Results.Ok(updatedUser);
+
 }).WithName("UpdateUser")
 .WithOpenApi()
 .RequireAuthorization();
@@ -248,7 +274,12 @@ app.MapPut("update/user", [Authorize(Roles = "Admin")](Guid Id, IUserRepository 
 
 
 
+
 SeedAdminUser(app);
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Account}/{action=Login}/{id?}");
+
 
 app.Run();
 

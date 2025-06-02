@@ -1,6 +1,9 @@
+using WebApplication2.DTO;
+using WebApplication2.Migrations;
+
 namespace WebApplication2.Interfaces;
 
-public interface IEmailServise
+public interface IEmailService
 {
-    
+    Task SendEmail(EmailDto emailDto);
 }

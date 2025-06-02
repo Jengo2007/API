@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebApplication2.Entities;
 
-public class Cashiers
+public class Cashier
 {
     [Key]
     [Column("CashierID")]

@@ -7,10 +7,10 @@ public class CashierContext:DbContext
 {
     public CashierContext(DbContextOptions<CashierContext> options) : base(options)
     {
-
+        
     }
 
-    public DbSet<Cashiers> Cashiers { get; set; }
+    public DbSet<Cashier> Cashiers { get; set; }
 
     
     public DbSet<User> Users { get; set; }
@@ -19,9 +19,9 @@ public class CashierContext:DbContext
     {
         base.OnModelCreating(modelBuilder);
         modelBuilder.Entity<User>()
-            .HasOne<Cashiers>(c=>c.Cashier)
+            .HasOne<Cashier>(c=>c.Cashier)
             .WithOne(u => u.User)
-            .HasForeignKey<Cashiers>(u => u.UserId);
+            .HasForeignKey<Cashier>(u => u.UserId);
         modelBuilder.Entity<Admins>()
             .Property(a => a.AdminPassword)
             .IsRequired();

@@ -5,7 +5,7 @@ namespace WebApplication2.Interfaces;
 
 public interface ICashierService
 {
-    public byte[] GenerateCasiersFile();
-    public bool RegisterCashier(RegisterCashierDto registerCashierDto);
+    Task< byte[]> GenerateCasiersFile();
+    Task<bool> RegisterCashier(RegisterCashierDto registerCashierDto);
 
 }

@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WebApplication2.ViewModels;
 
-public class RegisteViewModel
+public class RegisterViewModel
 {
     [Required]
     [MinLength(3)]

@@ -1,5 +1,6 @@
 using WebApplication2.DTO;
 using WebApplication2.Entities;
+using Task = DocumentFormat.OpenXml.Office2021.DocumentTasks.Task;
 
 namespace WebApplication2.Interfaces;
 
@@ -10,12 +11,12 @@ public interface ICashierRepository
     /// /// </summary>
     /// <param name="cashier"></param>
     /// <returns></returns>
-    public Cashiers AddCashier(Cashiers cashier);
+    public Task<Cashier> AddCashier(Cashier cashier);
     /// <summary>
     /// Вывод всех кассиров
     /// </summary>
     /// <returns></returns>
-    public List<Cashiers> GetAllCashiers();
+    Task<List<CashierResponceDto>> GetAllCashiers();
 
     /// <summary>
     /// Обновление Кассира
@@ -23,17 +24,17 @@ public interface ICashierRepository
     /// <param name="cashier"></param>
     /// <param name="id"></param>
     /// <returns></returns>
-    public Cashiers UpdateCashierById(CashierDto cashier, Guid id);
+     Task<Cashier> UpdateCashierById(CashierDto cashier, Guid id);
     /// <summary>
     /// Удаление кассира
     /// </summary>
     /// <param name="cashier"></param>
     /// <returns></returns>
-    public Cashiers DeleteCashierById(Guid id);
+    Task< Cashier> DeleteCashierById(Guid id);
     /// <summary>
     /// /// /// Вывод кассира по ID
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    public Cashiers? GetCashierById(Guid id);
+    Task< CashierResponceDto?> GetCashierById(Guid id);
 }
