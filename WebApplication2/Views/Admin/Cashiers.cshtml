@@ -1,0 +1,56 @@
+@{
+    ViewData["Title"] = "Кассиры";
+    Layout = "_LayoutAdmin";
+}
+@model IEnumerable<WebApplication2.DTO.CashierResponceDto>
+
+<main class="main" style="color: #000000;">
+    <h2>Список кассиров</h2>
+    <table class="data-table">
+        <thead>
+        <tr>
+            <th>Имя</th>
+            <th>Email</th>
+            <th>Телефон</th>
+            <th>Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var cashier in Model)
+        {
+            <tr>
+                <td>@cashier.CashierName</td>
+                <td>@cashier.Email</td>
+                <td>@cashier.CashierPhoneNumber</td>
+                <td class="actions-column">
+                    <a href="javascript:void(0);" 
+                       class="edit-cashier-btn"
+                       data-cashier-id="@cashier.CashierId"
+                       data-cashier-name="@cashier.CashierName"
+                       data-cashier-phone="@cashier.CashierPhoneNumber"
+                       title="Редактировать">
+                        <i class="fas fa-edit"></i>
+                    </a>
+
+                    <a href="@Url.Action("DeleteCashier", "Admin", new { id = cashier.CashierId })" 
+                       title="Удалить" 
+                       onclick="return confirm('Вы уверены?');">
+                        <i class="fas fa-trash-alt"></i>
+                    </a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</main>
+
+
+
+@section Scripts {
+    <!-- Bootstrap 5 -->
+    @* <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> *@
+    @* *@
+    @* <script> *@
+    @*     *@
+    @* </script> *@
+}

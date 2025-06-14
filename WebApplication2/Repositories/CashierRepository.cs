@@ -28,15 +28,18 @@ public class CashierRepository:ICashierRepository
 
     public async Task<List<CashierResponceDto>> GetAllCashiers()
     {
-        var cashiers = await _context.Cashiers.Select(c => new CashierResponceDto()
-        {
-            CashierId = c.CashierID,
-            CashierName = c.CashierName,
-            CashierPhoneNumber = c.CashierPhoneNumber,
-            UserId = c.UserId
+        var cashiers = await _context.Cashiers
+            .Include(c => c.User)
+            .Select(c => new CashierResponceDto()
+            {
+                CashierId = c.CashierID,
+                CashierName = c.CashierName,
+                CashierPhoneNumber = c.CashierPhoneNumber,
+                UserId = c.UserId,
+                Email = c.User.Email,
+            })
+            .ToListAsync();
 
-
-        }).ToListAsync();
         return cashiers;
     }
     
@@ -52,7 +55,8 @@ public class CashierRepository:ICashierRepository
             _context.Cashiers.Update(cashierById);
             await _context.SaveChangesAsync();
         }
-        return cashierById;    }
+        return cashierById;    
+    }
 
     public async Task<Cashier> DeleteCashierById(Guid id)
     {

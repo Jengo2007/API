@@ -7,7 +7,7 @@
     <!-- Подключаем стили для админ-панели -->
     <link rel="stylesheet" href="~/css/admin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
-
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 </head>
 <body>
 <div class="container admin-panel">
@@ -19,16 +19,18 @@
         </div>
         <ul class="menu">
             <li class="menu-item"><a href="@Url.Action("Index", "Admin")">Главная</a></li>
-            <li class="menu-item"><a href="@Url.Action("Index", "Admin")">Кассиры</a></li>
-            <li class="menu-item"><a href="@Url.Action("Index", "Admin")">Пользователи</a></li>
+            <li class="menu-item"><a href="@Url.Action("Cashiers", "Admin")">Кассиры</a></li>
+            <li class="menu-item"><a href="@Url.Action("Users", "Admin")">Пользователи</a></li>
         </ul>
     </aside>
 
     <div class="admin-content">
         @RenderBody()
     </div>
+
+    @RenderSection("Scripts", required: false)
 </div>
 
-<script src="js/script.js"></script>
+<script src="~/js/script.js"></script>
 </body>
 </html>

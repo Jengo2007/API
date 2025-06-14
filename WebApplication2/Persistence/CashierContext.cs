@@ -14,7 +14,7 @@ public class CashierContext:DbContext
 
     
     public DbSet<User> Users { get; set; }
-    
+    public DbSet<Admins> Admins { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -25,9 +25,43 @@ public class CashierContext:DbContext
         modelBuilder.Entity<Admins>()
             .Property(a => a.AdminPassword)
             .IsRequired();
+        // Добавим пользователей
+        var user1Id = Guid.NewGuid();
+        var user2Id = Guid.NewGuid();
+
+        modelBuilder.Entity<User>().HasData(
+            new User
+            {
+                Id = user1Id,
+                Username = "admin",
+                Password = "hashed_password_admin",
+                Email = "admin@mail.com",
+                Role = Roles.Admin
+            },
+            new User
+            {
+                Id = user2Id,
+                Username = "cashier1",
+                Password = "hashed_password_cashier",
+                Email = "cashier@mail.com",
+                Role = Roles.Cashier
+            }
+        );
+
+        // Добавим кассира
+        modelBuilder.Entity<Cashier>().HasData(
+            new Cashier
+            {
+                CashierID = Guid.NewGuid(),
+                CashierName = "Иван Иванов",
+                CashierPhoneNumber = 900123456,
+                UserId = user2Id
+            }
+        );
     }
-    public DbSet<Admins> Admins { get; set; }
+    }
     
     
-}
+    
+
 

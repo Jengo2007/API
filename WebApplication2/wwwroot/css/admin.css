@@ -9,7 +9,7 @@ body {
 main.main {
     max-width: 1200px;
     padding: 20px;
-    height: 490px;
+    min-height: 490px; /* заменил height на min-height */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -162,4 +162,97 @@ a.btn-danger:hover {
 
 .email-column {
     width: 40%;
+}
+
+/* ✅ Модальное окно без Bootstrap */
+.custom-modal {
+    display: none; /* скрыта по умолчанию */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.custom-modal.show {
+    display: flex; /* появляется по show */
+    justify-content: center;
+    align-items: center;
+}
+
+.custom-modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 20px 25px;
+    border-radius: 8px;
+    width: 320px;
+    position: relative;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+.custom-close {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    font-size: 22px;
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+}
+
+.custom-close:hover {
+    color: #e74c3c;
+}
+
+/* Анимация появления */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* ✅ Стили для полей и кнопок внутри модалки */
+.custom-modal-content input[type="text"],
+.custom-modal-content input[type="number"],
+.custom-modal-content button {
+    width: 100%;
+    margin: 10px 0;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.custom-modal-content label {
+    font-weight: 600;
+    color: #333;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.custom-modal-content button[type="submit"] {
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.custom-modal-content button[type="submit"]:hover {
+    background-color: #2980b9;
+}
+
+.custom-modal-content button[type="button"] {
+    background-color: #95a5a6;
+    color: #fff;
+    border: none;
+    margin-left: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.custom-modal-content button[type="button"]:hover {
+    background-color: #7f8c8d;
 }

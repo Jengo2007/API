@@ -103,7 +103,7 @@ var app = builder.Build();
 app.UseStaticFiles();
 app.UseRouting();
 
-app.UseAuthentication(); // 🔹 ОБЯЗАТЕЛЬНО до Authorization
+app.UseAuthentication();  // обязательно перед Authorization
 app.UseAuthorization();
 
 app.MapDefaultControllerRoute();
@@ -118,7 +118,10 @@ app.Run();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(options =>
+    {
+        options.RoutePrefix = "swagger"; // Swagger доступен только по /swagger
+    });
 }
 
 app.UseHttpsRedirection();
@@ -275,20 +278,24 @@ app.MapPut("update/user", [Authorize(Roles = "Admin")]async (Guid Id, IUserRepos
 
 
 
-SeedAdminUser(app);
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Account}/{action=Login}/{id?}");
 
-
+await SeedAdminUserAsync(app);
 app.Run();
 
-void SeedAdminUser(WebApplication app)
+async Task SeedAdminUserAsync(WebApplication app)
 {
     using var scope = app.Services.CreateScope();
     var context = scope.ServiceProvider.GetRequiredService<CashierContext>();
+
+    await context.Database.MigrateAsync();
+
     var passwordHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher<User>>();
-    if (!context.Users.Any(u => u.Role == Roles.Admin))
+
+    if (!await context.Users.AnyAsync(u => u.Role == Roles.Admin))
     {
         var admin = new User
         {
@@ -296,8 +303,8 @@ void SeedAdminUser(WebApplication app)
             Role = Roles.Admin
         };
         admin.Password = passwordHasher.HashPassword(admin, "111Amdin111");
-        context.Users.Add(admin);
-        context.SaveChanges();
+        await context.Users.AddAsync(admin);
+        await context.SaveChangesAsync();
     }
 }
 
